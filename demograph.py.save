@@ -1,0 +1,31 @@
+import turtle as t
+
+x="p"
+
+'''
+while(x!="x"):
+
+	for i in range(16):
+		if i%2==0:
+			t.pendown()
+			t.fd(5*i)
+			t.right(45)
+		else:
+			#t.penup()
+			t.fd(5*i)
+			t.right(45)
+'''
+
+t.left(90)
+t.fd(100)
+t.left(90)
+t.fd(100)
+t.left(90)
+t.fd(100)
+
+t.setposition(100,100)
+t.reset()
+t.circle(200)
+
+
+x = raw_input()
