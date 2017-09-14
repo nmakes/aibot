@@ -32,7 +32,7 @@ class World(object):
         if xmax==None:
             xmax = globalXmax
 
-        return y*xmax + x
+        return y*(xmax+1) + x
 
     @staticmethod
     def has_dirt(world,x,y):
@@ -301,7 +301,7 @@ class TreeNode:
                 child = node.child_node(problem, action)
                 
                 if (child.state not in exploredStates) or (child not in frontier):                    
-                    if problem.goal_test(child.state): 
+                    if problem.goal_test(child.state):
                         return child.solution()
 
                     frontier.append(child)

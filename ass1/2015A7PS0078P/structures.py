@@ -6,9 +6,9 @@ from random import ( randrange, sample )
 failure = None
 
 globalXmin = 0
-globalXmax = 0
+globalXmax = 9
 globalYmin = 0
-globalYmax = 0
+globalYmax = 9
 
 class World(object):
 
@@ -32,7 +32,7 @@ class World(object):
         if xmax==None:
             xmax = globalXmax
 
-        return y*xmax + x
+        return y*(xmax+1) + x
 
     @staticmethod
     def has_dirt(world,x,y):
@@ -153,6 +153,12 @@ class World(object):
         print "---"
 
     def __str__(self):
+        
+        global globalXmin
+        global globalYmin
+        global globalXmax
+        global globalYmax
+
         retStr = ""
         retStr = retStr + "xm: " + globalXmin + ", xM: " + globalXmax + ", ym: ", + globalYmin + ", yM: " + globalYmax
         return retStr
@@ -161,7 +167,18 @@ class World(object):
 class Problem(object):
 
     # constructor
-    def __init__(self, _initialState, _xmin=globalXmin, _xmax=globalXmax, _ymin=globalYmin, _ymax=globalYmax):
+    def __init__(self, _initialState, _xmin=None, _xmax=None, _ymin=None, _ymax=None):
+
+        global globalXmin
+        global globalYmin
+        global globalXmax
+        global globalYmax
+
+        if(_xmin==None):
+            _xmin = globalXmin
+            _xmax = globalXmax
+            _ymin = globalYmin
+            _ymax = globalYmax
         
         goalWorld = World.get_goal_world(_xmin, _xmax, _ymin, _ymax)
 
@@ -173,7 +190,19 @@ class Problem(object):
         self.ymin = _ymax
 
     # possible actions: gives the possible actions in a state (does not return the impossible actions)
-    def possible_actions(self, state, _xmin=globalXmin, _xmax=globalXmax, _ymin=globalYmin, _ymax=globalYmax):
+    def possible_actions(self, state, _xmin=None, _xmax=None, _ymin=None, _ymax=None):
+
+        global globalXmin
+        global globalYmin
+        global globalXmax
+        global globalYmax
+
+        if(_xmin==None):
+            _xmin = globalXmin
+            _xmax = globalXmax
+            _ymin = globalYmin
+            _ymax = globalYmax
+
         possibleActions = ['l','r','u','d','s']
         actions = []
 
@@ -287,14 +316,16 @@ class TreeNode:
         if problem.goal_test(node.state)==True:
             return node.solution()
 
-        frontier = []
-
-        frontier.append(node)
+        frontier = [node]
+        
         exploredStates = []
 
         while True:
 
+            #print "LEN: ", len(frontier)
+
             if(len(frontier)==0):
+                #print "fail"
                 return failure
 
             node = frontier.pop(0)
