@@ -20,8 +20,7 @@ rootNode = TreeNode(initialState)
 while True:
 	print "1. Display the room environment"
 	print "2. Find the path using (BFS)"
-	print "3. Display statistics"
-	print "4. Exit"
+	print "3. Exit"
 
 	inp = int(raw_input())
 
@@ -32,7 +31,4 @@ while True:
 		print rootNode.breadth_first_search(cleanTheRoomProblem)
 
 	elif inp==3:
-		pass
-
-	elif inp==4:
 		break
