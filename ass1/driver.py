@@ -5,22 +5,34 @@ from structures import *
 
 print ""
 print "For an N x N world with p fraction of dirt, enter the following: "
-print "N: "
+print "N:",
 n = int(raw_input())
-print "p (0<=p<=1): "
+print "p (0<=p<=1):",
 p = float(raw_input())
+
+World.set_global_limits(0, n-1, 0, n-1)
+
+initialWorld = World.get_random_world(p)
+initialState = World.get_random_state(initialWorld)
+cleanTheRoomProblem = Problem(initialState)
+rootNode = TreeNode(initialState)
 
 while True:
 	print "1. Display the room environment"
-	print "2. Find the path using T1"
-	
-initialWorld = World.get_random_world(p)
-print initialWorld
-initialState = World.get_random_state(initialWorld)
-print initialState
-cleanTheRoomProblem = Problem(initialState)
-#print cleanTheRoomProblem
+	print "2. Find the path using (BFS)"
+	print "3. Display statistics"
+	print "4. Exit"
 
-rootNode = TreeNode(initialState)
+	inp = int(raw_input())
 
-print rootNode.breadth_first_search(cleanTheRoomProblem)
+	if inp==1:
+		World.print_world(initialWorld)
+
+	elif inp==2:
+		print rootNode.breadth_first_search(cleanTheRoomProblem)
+
+	elif inp==3:
+		pass
+
+	elif inp==4:
+		break

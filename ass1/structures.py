@@ -5,15 +5,33 @@ from random import ( randrange, sample )
 
 failure = None
 
+globalXmin = 0
+globalXmax = 0
+globalYmin = 0
+globalYmax = 0
+
 class World(object):
 
-    globalXmin = 0
-    globalXmax = 9
-    globalYmin = 0
-    globalYmax = 9
+    @staticmethod 
+    def set_global_limits(xmin, xmax, ymin, ymax):
+        global globalXmin
+        global globalYmin
+        global globalXmax
+        global globalYmax
+
+        globalXmin = xmin
+        globalXmax = xmax
+        globalYmin = ymin
+        globalYmax = ymax        
 
     @staticmethod
-    def get_pos(x,y,xmax=globalXmax):
+    def get_pos(x,y,xmax=None):
+
+        global globalXmax
+
+        if xmax==None:
+            xmax = globalXmax
+
         return y*xmax + x
 
     @staticmethod
@@ -25,7 +43,19 @@ class World(object):
         world[World.get_pos(x,y)] = False
 
     @staticmethod
-    def get_goal_world(xmin=globalXmin, xmax=globalXmax, ymin=globalYmin, ymax=globalYmax):
+    def get_goal_world(xmin=None, xmax=None, ymin=None, ymax=None):
+
+        global globalXmin
+        global globalYmin
+        global globalXmax
+        global globalYmax
+
+        if(xmin==None):
+            xmin = globalXmin
+            xmax = globalXmax
+            ymin = globalYmin
+            ymax = globalYmax
+
         goalWorld = []
         for x in range(xmax+1):
             for y in range(ymax+1):
@@ -33,8 +63,21 @@ class World(object):
         return goalWorld
 
     @staticmethod
-    def get_random_world(p=.2, xmin=globalXmin, xmax=globalXmax, ymin=globalYmin, ymax=globalYmax):
+    def get_random_world(p=.2, xmin=None, xmax=None, ymin=None, ymax=None):
+
+        global globalXmin
+        global globalYmin
+        global globalXmax
+        global globalYmax
+
+        if(xmin==None):
+            xmin = globalXmin
+            xmax = globalXmax
+            ymin = globalYmin
+            ymax = globalYmax
+
         randomWorld = []
+        #print globalXmin, globalXmax, globalYmin, globalYmax
         size = (xmax-xmin+1) * (ymax-ymin+1)
         
         for _ in range( size ):
@@ -46,7 +89,19 @@ class World(object):
         return randomWorld
 
     @staticmethod
-    def get_goal_states(goalWorld, xmin=globalXmin, xmax=globalXmax, ymin=globalYmin, ymax=globalYmax):
+    def get_goal_states(goalWorld, xmin=None, xmax=None, ymin=None, ymax=None):
+
+        global globalXmin
+        global globalYmin
+        global globalXmax
+        global globalYmax
+
+        if(xmin==None):
+            xmin = globalXmin
+            xmax = globalXmax
+            ymin = globalYmin
+            ymax = globalYmax
+
         goalStates =    [                             \
                             [goalWorld, (xmin,ymax)], \
                             [goalWorld, (xmax,ymin)], \
@@ -56,14 +111,46 @@ class World(object):
         return goalStates
 
     @staticmethod
-    def get_random_state(randomWorld, xmin=globalXmin, xmax=globalXmax, ymin=globalYmin, ymax=globalYmax):
+    def get_random_state(randomWorld, xmin=None, xmax=None, ymin=None, ymax=None):
+
+        global globalXmin
+        global globalYmin
+        global globalXmax
+        global globalYmax
+
+        if(xmin==None):
+            xmin = globalXmin
+            xmax = globalXmax
+            ymin = globalYmin
+            ymax = globalYmax
+
         return [randomWorld, (sample([xmin,xmax],1)[0], sample([ymax,ymin],1)[0])]
 
     @staticmethod
-    def print_world(world, xmin=globalXmin, xmax=globalXmax, ymin=globalYmin, ymax=globalYmax):
-        for x in range(xmin, xmax+1):
-            for y in range(ymin, ymax+1):
-                print 
+    def print_world(world, xmin=None, xmax=None, ymin=None, ymax=None):
+
+        global globalXmin
+        global globalYmin
+        global globalXmax
+        global globalYmax
+
+        if(xmin==None):
+            xmin = globalXmin
+            xmax = globalXmax
+            ymin = globalYmin
+            ymax = globalYmax
+
+        print "---"
+
+        for y in range(ymin, ymax+1):
+            for x in range(xmin, xmax+1):
+                if world[World.get_pos(x,y)]:
+                    print 1,
+                else:
+                    print 0,
+            print ""
+
+        print "---"
 
     def __str__(self):
         retStr = ""
@@ -74,7 +161,7 @@ class World(object):
 class Problem(object):
 
     # constructor
-    def __init__(self, _initialState, _xmin=World.globalXmin, _xmax=World.globalXmax, _ymin=World.globalYmin, _ymax=World.globalYmax):
+    def __init__(self, _initialState, _xmin=globalXmin, _xmax=globalXmax, _ymin=globalYmin, _ymax=globalYmax):
         
         goalWorld = World.get_goal_world(_xmin, _xmax, _ymin, _ymax)
 
@@ -86,7 +173,7 @@ class Problem(object):
         self.ymin = _ymax
 
     # possible actions: gives the possible actions in a state (does not return the impossible actions)
-    def possible_actions(self, state, _xmin=World.globalXmin, _xmax=World.globalXmax, _ymin=World.globalYmin, _ymax=World.globalYmax):
+    def possible_actions(self, state, _xmin=globalXmin, _xmax=globalXmax, _ymin=globalYmin, _ymax=globalYmax):
         possibleActions = ['l','r','u','d','s']
         actions = []
 
@@ -131,20 +218,22 @@ class Problem(object):
         return [world, (x,y)]
 
     def goal_test(self, state):
-        #print "gt1"
         if state in self.goalStates:
-        #   print "gt2"
             return True
         else:
-            print "gt3"
             return False
 
     def compute_heuristic1(self, state):
-        """search in other three quadrants"""
+        """
+        TODO
+
+        Heuristic: number of dirt cells in the row/column of the partially observable 3x3 space
+        Optimization: move towards the direction with higher value of this heuristic. 
+        """
         pass
 
     def compute_heuristic2(self, state):
-        """TODO: move in the direction you came towards"""
+        """TODO: move in the direction you came from"""
         pass
 
     def __str__(self):
@@ -168,13 +257,14 @@ class TreeNode:
     def __repr__(self):
         return "\nSTATE: " + str(self.state) + "\nACTION: " + str(self.action)
 
+    # child node: gives the child node pertaining to the given action on the state contained in the problem
     def child_node(self, problem, action):
         nextState = problem.successor_function(self.state, action)
         childNode = TreeNode(nextState, self, action)
         return childNode
 
+    # solution resulting the path to the goal states
     def solution(self):
-        """Return the sequence of actions to go from the root to this node."""
         mov = self
         soln = []
 
@@ -182,93 +272,36 @@ class TreeNode:
             soln.append(mov.action)
             mov = mov.parent
         
-        #return soln
         return soln[::-1]
 
+    # T1: BFS
     def breadth_first_search(self, problem):
 
         node = TreeNode(problem.initialState)
-        #print "bfs1"
         
         if problem.goal_test(node.state)==True:
-        #    print "bfs2"
             return node.solution()
 
-        #print "bfs3"
-
         frontier = []
-        print node.state
-        print node.parent
+
         frontier.append(node)
-        #exploredStates = set()
         exploredStates = []
 
-        print "LEN: ", len(frontier)
-        print "bfs4"
-        #print frontier
-
         while True:
-            print "---"
-
-            print frontier
 
             if(len(frontier)==0):
-                print "bfs5.5"
                 return failure
 
             node = frontier.pop(0)
-            
-            #print node
 
             exploredStates.append(node.state)
             
-            #print "bfs8"
-            #print exploredStates
-
             for action in problem.possible_actions(node.state):
-                print "bfs9", action            
+                
                 child = node.child_node(problem, action)
-                #print child
-                if (child.state not in exploredStates) or (child not in frontier):
-                    print "bfs10"
-                    if problem.goal_test(child.state):
+                
+                if (child.state not in exploredStates) or (child not in frontier):                    
+                    if problem.goal_test(child.state): 
                         return child.solution()
+
                     frontier.append(child)
-                    #print frontier
-
-#---- TESTING ----
-
-
-
-
-
-
-# -- UNUSED CODE --
-
-'''
-class Queue(object):
-
-    def __init__(self, queueObjects=[]):
-        if type(queueObjects!=list):
-            queueObjects = [queueObjects]
-        self.queue = queueObjects
-
-    def insert(self, v):
-        self.queue.append(v)
-
-    def pop(self):
-        if len(self.queue)>0:
-            return self.queue.pop(0)
-
-    def is_empty(self):
-        return len(self.queue)<=0
-
-    def __len__(self):
-        return len(self.queue)
-
-    def __str__(self):
-        return str(self.queue)
-
-    def __iter__(self):
-        return iter(self.queue)
-'''
