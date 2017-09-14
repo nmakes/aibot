@@ -1,3 +1,6 @@
+#ID: 2015A7PS0078P
+#Name: Naveen Venkat
+
 from random import ( randrange, sample )
 
 failure = None
@@ -5,9 +8,9 @@ failure = None
 class World(object):
 
     globalXmin = 0
-    globalXmax = 1
+    globalXmax = 9
     globalYmin = 0
-    globalYmax = 1
+    globalYmax = 9
 
     @staticmethod
     def get_pos(x,y,xmax=globalXmax):
@@ -67,31 +70,6 @@ class World(object):
         retStr = retStr + "xm: " + globalXmin + ", xM: " + globalXmax + ", ym: ", + globalYmin + ", yM: " + globalYmax
         return retStr
 
-class Queue(object):
-
-    def __init__(self, queueObjects=[]):
-        if type(queueObjects!=list):
-            queueObjects = [queueObjects]
-        self.queue = queueObjects
-
-    def insert(self, v):
-        self.queue.append(v)
-
-    def pop(self):
-        if len(self.queue)>0:
-            return self.queue.pop(0)
-
-    def is_empty(self):
-        return len(self.queue)<=0
-
-    def __len__(self):
-        return len(self.queue)
-
-    def __str__(self):
-        return str(self.queue)
-
-    def __iter__(self):
-        return iter(self.queue)
 
 class Problem(object):
 
@@ -153,9 +131,9 @@ class Problem(object):
         return [world, (x,y)]
 
     def goal_test(self, state):
-        print "gt1"
+        #print "gt1"
         if state in self.goalStates:
-            print "gt2"
+        #   print "gt2"
             return True
         else:
             print "gt3"
@@ -174,16 +152,21 @@ class Problem(object):
 
 class TreeNode:
 
-    def __init__(self, _state, _parent=None, _action=None, _path_cost=0):
+    def __init__(self, _state, _parent=None, _action=None):
         
         self.state = _state
         self.parent = _parent
         self.action = _action
-        self.path_cost = _path_cost
         self.depth = 0
 
         if self.parent!=None:
             self.depth = self.parent.depth + 1
+
+    def __str__(self):
+        return "\nSTATE: " + str(self.state) + "\nACTION: " + str(self.action)
+
+    def __repr__(self):
+        return "\nSTATE: " + str(self.state) + "\nACTION: " + str(self.action)
 
     def child_node(self, problem, action):
         nextState = problem.successor_function(self.state, action)
@@ -205,13 +188,13 @@ class TreeNode:
     def breadth_first_search(self, problem):
 
         node = TreeNode(problem.initialState)
-        print "bfs1"
+        #print "bfs1"
         
         if problem.goal_test(node.state)==True:
-            print "bfs2"
+        #    print "bfs2"
             return node.solution()
 
-        print "bfs3"
+        #print "bfs3"
 
         frontier = []
         print node.state
@@ -226,6 +209,8 @@ class TreeNode:
 
         while True:
             print "---"
+
+            print frontier
 
             if(len(frontier)==0):
                 print "bfs5.5"
@@ -253,13 +238,37 @@ class TreeNode:
 
 #---- TESTING ----
 
-initialWorld = World.get_random_world(0.4)
-print initialWorld
-initialState = World.get_random_state(initialWorld)
-print initialState
-cleanTheRoomProblem = Problem(initialState)
-#print cleanTheRoomProblem
 
-rootNode = TreeNode(initialState)
 
-print rootNode.breadth_first_search(cleanTheRoomProblem)
+
+
+
+# -- UNUSED CODE --
+
+'''
+class Queue(object):
+
+    def __init__(self, queueObjects=[]):
+        if type(queueObjects!=list):
+            queueObjects = [queueObjects]
+        self.queue = queueObjects
+
+    def insert(self, v):
+        self.queue.append(v)
+
+    def pop(self):
+        if len(self.queue)>0:
+            return self.queue.pop(0)
+
+    def is_empty(self):
+        return len(self.queue)<=0
+
+    def __len__(self):
+        return len(self.queue)
+
+    def __str__(self):
+        return str(self.queue)
+
+    def __iter__(self):
+        return iter(self.queue)
+'''
