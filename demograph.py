@@ -1,4 +1,5 @@
 import turtle as t
+from random import randrange
 
 '''
 x = "p"
@@ -93,25 +94,6 @@ for start_point in start_points:
 # USABLE CODE
 # -----------
 
-
-def publishStats():
-
-	Text_V = Text_Y
-
-	t.penup()
-	t.setpos(Text_X, Text_V)
-	t.write(arg="Home = ", move=True, align="left", font=("Arial", 20, "bold"))
-	t.write(arg=251, move=True, align="left", font=("Arial", 20, "normal"))
-
-	Text_V = Text_V - Text_V_Space
-
-	t.setpos(Text_X, Text_V)
-	t.write(arg="Other Stuff = ", move=True, align="left", font=("Arial", 20, "bold"))
-	t.write(arg=5613.61, move=True, align="left", font=("Arial", 20, "normal"))
-
-
-t.tracer(1,0)
-
 V_max = 800
 H_max = 1366
 H_padding = 50
@@ -121,42 +103,88 @@ Text_X = 20
 Text_Y = V_max - 50
 Text_V_Space = 50
 
+def initScreen(H_max, V_max, H_padding, V_padding):
+	
+	t.tracer(1,0)
+	t.setup(H_max, V_max, H_padding, V_padding) #
+	t.setworldcoordinates(llx=0, lly=V_max, urx=H_max, ury=0)
+
+def publishStats(Text_X, Text_Y, Text_V_Space, xpos, ypos):
+
+	Text_V = Text_Y
+
+	t.penup()
+	t.setpos(Text_X, Text_V)
+	t.write(arg="xpos = ", move=True, align="left", font=("Arial", 20, "bold"))
+	t.write(arg=xpos, move=True, align="left", font=("Arial", 20, "normal"))
+
+	Text_V = Text_V - Text_V_Space
+
+	t.setpos(Text_X, Text_V)
+	t.write(arg="ypos = ", move=True, align="left", font=("Arial", 20, "bold"))
+	t.write(arg=ypos, move=True, align="left", font=("Arial", 20, "normal"))
+
+def renderScreen():
+	t.hideturtle()
+	t.reset()
+
+	publishStats(Text_X, Text_Y, Text_V_Space, 0,0)
+
+	#Vertical divider
+	t.penup()
+	t.setpos(int(H_max/3), 0)
+	t.pendown()
+	t.setpos(int(H_max/3), V_max)
+
+	# Second quadrant - horizontal
+	t.penup()
+	t.setpos(H_max/3, V_max/2)
+	t.pendown()
+	t.setpos(H_max, V_max/2)
+
+	# Second quadrant - vertical
+	t.penup()
+	t.setpos(2*H_max/3, 0)
+	t.pendown()
+	t.setpos(2*H_max/3, V_max)
+
 # Set window to be 300 by 200 with the point (0, 0) as the
 # lower left corner and (300, 200) as the upper right corner.
-
-t.setup(H_max, V_max, H_padding, V_padding) #
-t.setworldcoordinates(llx=0, lly=0, urx=H_max, ury=V_max)
-t.hideturtle()
-
-#Vertical divider
-t.penup()
-t.setpos(int(H_max/3), 0)
-t.pendown()
-t.setpos(int(H_max/3), V_max)
-
-publishStats()
-
-'''
-# Second quadrant - horizontal
-t.penup()
-t.setpos(H_max/3, V_max/2)
-t.pendown()
-t.setpos(H_max, V_max/2)
-
-# Second quadrant - vertical
-t.penup()
-t.setpos(2*H_max/3, 0)
-t.pendown()
-t.setpos(2*H_max/3, V_max)
-
-'''
 
 def shapedrawer(x, y):
 	t.penup()
 	# Set the position of the turtle to the clicked location.
 	t.pendown()
 	t.setpos(x, y)
+	xpos,ypos = t.pos()
+	publishStats(Text_X, Text_Y, Text_V_Space, xpos, ypos)
 	t.penup()
 
-t.onscreenclick(shapedrawer)
+def drawSquare(fill,X,Y,W,H):
+	t.penup()
+	t.setpos(X,Y)
+	t.pendown()
+	t.setpos(X+W,Y)
+	t.setpos(X+W,Y+H)
+	t.setpos(X,Y+H)
+	t.setpos(X,Y)
+	t.pendown()
+	t.setpos(X+W,Y)
+
+def drawGrid(state,X,Y,R,C,W=40,H=40):
+	print state
+	for y in range(R):
+		for x in range(C):
+			drawSquare(0, X+x*W, Y+y*H, W, H)
+
+initScreen(H_max, V_max, H_padding, V_padding)
+
+renderScreen()
+
+# drawGrid(0,-V_max/12,H_max/3,0,10,10)
+
+# t.onscreenclick(shapedrawer)
+
+t.setpos(0,0)
+
 t.mainloop()

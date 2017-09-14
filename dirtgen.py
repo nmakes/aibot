@@ -1,11 +1,21 @@
 from random import randrange
-
+from random import sample
 #------------------
 # WORLD DEFINITIONS
 #------------------
 
-def generateDirt(p):
-	
-	for i in range(X_min, X_max+1):
-		for j in range(Y_min, Y_max+1):
-			world.append(randrange(0,2)==1) # True means dirt is there
+def generateDirt(p, grid_X_min, grid_X_max, grid_Y_min, grid_Y_max):
+
+	tempWorld = []
+
+	size = (grid_X_max-grid_X_min+1) * (grid_Y_max-grid_Y_min+1)
+
+	for _ in range( size ):
+		tempWorld.append(0)
+
+	for x in sample(range( size ), int(size*p)):
+		tempWorld[x] = 1
+
+	#print tempWorld
+
+	return tempWorld
