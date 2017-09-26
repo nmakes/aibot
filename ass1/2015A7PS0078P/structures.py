@@ -322,8 +322,6 @@ class TreeNode:
 
         while True:
 
-            #print "LEN: ", len(frontier)
-
             if(len(frontier)==0):
                 #print "fail"
                 return failure
@@ -331,6 +329,8 @@ class TreeNode:
             node = frontier.pop(0)
 
             exploredStates.append(node.state)
+            
+            print "depth = ", node.depth
             
             for action in problem.possible_actions(node.state):
                 
