@@ -5,11 +5,16 @@ minint = -999999999999999999
 maxplayer = 1
 minplayer = -1
 
+verbose = False
+
 def uf_zeroList(n):
+	if verbose:
+		print "uf_zeroList: ", n
 	tempList = []
 	for i in range(n):
-		tempList
+		tempList.append(0)
 	pass
+	return tempList
 
 class TreeNode(object):
 
@@ -63,21 +68,25 @@ class TreeNode(object):
 	# player = minplayer / maxplayer
 
 def is_ith_column_free(board_setting, i):
+	if verbose:
+		print "is_ith_column_free: ", i
 	for row in range(4):
 		if board_setting[row*4 + i] == 0:
 			return True
 	return False
 
 def get_ith_column_free_cell_index(board_setting, i):
+	if verbose:
+		print "get_ith_column_free_cell_index: ", i
 	for row in range(4):
 		if board_setting[4*row + i] == 0:
 			return 4*row + i
 	print "FATAL ERROR: get_ith_column_free_cell_index | ", i, "col is not empty. The board_setting is: "
-	print board_setting
 	return None
 
 def actions(state):
-
+	if verbose:
+		print "actions: ", state
 	board_setting = state[0]
 
 	possible_actions = []
@@ -85,54 +94,52 @@ def actions(state):
 	for i in range(4):
 		if is_ith_column_free(board_setting, i):
 			possible_actions.append(i+1)
-
+	if verbose:
+		print "possible_actions: ", possible_actions
 	return possible_actions
 
 def successor_function(state, action):
+
+	if verbose:
+		print "successor_function: ", state, ": ", action
 
 	board_setting = state[0]
 	player_turn = state[1]
 
 	if action == 1:
 		i = get_ith_column_free_cell_index(board_setting, 0)
-		board_setting[i] = player_turn
-		new_board_setting = board_setting
+		if(i==None):
+			return None
+		new_board_setting = list(board_setting)
+		new_board_setting[i] = player_turn
 
 	elif action == 2:
 		i = get_ith_column_free_cell_index(board_setting, 1)
-		board_setting[i] = player_turn
-		new_board_setting = board_setting
+		if(i==None):
+			return None
+		new_board_setting = list(board_setting)
+		new_board_setting[i] = player_turn
 
 	elif action == 3:
 		i = get_ith_column_free_cell_index(board_setting, 2)
-		board_setting[i] = player_turn
-		new_board_setting = board_setting
+		if(i==None):
+			return None
+		new_board_setting = list(board_setting)
+		new_board_setting[i] = player_turn
 
 	elif action == 4:
 		i = get_ith_column_free_cell_index(board_setting, 3)
-		board_setting[i] = player_turn
-		new_board_setting = board_setting
+		if(i==None):
+			return None
+		new_board_setting = list(board_setting)
+		new_board_setting[i] = player_turn
 
 	return [new_board_setting, -player_turn]
 
 
 def terminal_test(state):
-	
-	board_setting = state[0]
-	player_turn = state[1]
-
-	for i in range(16):
-		pass
-
-def is_uniform(board_setting, triplet):
-	
-	if board_setting[triplet[0]] == board_setting[triplet[1]] == board_setting[triplet[2]]:
-		return True
-	
-	return False
-
-def utility_value(state):
-
+	if verbose:
+		print "terminal_test: ", state
 	board_setting = state[0]
 	player_turn = state[1]
 
@@ -140,52 +147,142 @@ def utility_value(state):
 
 	for triplet in triplets:
 		if is_uniform(board_setting, triplet):
-			return board_setting[triplet[0]]
+			return True
 
-	print "FATAL ERROR: utility_value | board_setting is not uniform for any triplet"
-	print board_setting
-	return None
+	for i in range(16):
+		if board_setting[i]==0:
+			return False
+
+	return True
+
+def is_uniform(board_setting, triplet):
+	
+	if (board_setting[triplet[0]] == board_setting[triplet[1]] == board_setting[triplet[2]]) & (board_setting[triplet[0]]!=0):
+		return True
+	
+	return False
+
+def utility_value(state):
+	if verbose:
+		print "utility_value: ", state
+	board_setting = state[0]
+	player_turn = state[1]
+
+	triplets = [ [0,1,2], [1,2,3], [4,5,6], [5,6,7], [8,9,10], [9,10,11], [0,5,10], [1,6,11], [3,6,9], [2,5,8], [0,4,8], [1,5,9], [2,6,10], [3,7,11], [12,13,14], [13,14,15], [4,8,12], [5,9,13], [6,10,14], [7,11,15], [4,9,14], [5,10,15], [6,9,12], [7,10,13] ]
+
+	for triplet in triplets:
+		if is_uniform(board_setting, triplet):
+			if verbose:
+				print "YES:: ^_^ :: ", triplet
+			return board_setting[triplet[0]]
+	if verbose:
+		print "FATAL ERROR: utility_value | board_setting is not uniform for any triplet"
+		print board_setting
+
+	return 0
 
 def min_value(state):
+
 	if terminal_test(state):
 		return utility_value(state)
 	else:
 		v = maxint
-		for a in actions(state):
-			v = min(v, max_value(successor_function(state,a)))
+		Actions = actions(state)
+		#print Actions
+		for a in Actions:
+			succ = successor_function(state,a)
+			if succ!=None:
+				v = min(v, max_value(succ))
 		return v
 
 def max_value(state):
+
 	if terminal_test(state):
 		return utility_value(state)
 	else:
 		v = minint
-		for a in actions(state):
-			v = max(v, min_value(successor_function(state,a)))
+		Actions = actions(state)
+		#print Actions
+		for a in Actions:
+			succ = successor_function(state,a)
+			if succ!=None:
+				v = max(v, min_value(succ))
 		return v
 
 def minimax_algorithm(state):
 
+	if verbose:
+		print state
+
 	board_setting = state[0]
 	player_turn = state[1]
+
+	action = None
 
 	if player_turn == maxplayer:
 		v = minint
 		for a in actions(state):
-			v = max(v, min_value(successor_function(state,a)))
-		return v
+			print "checking action ", a
+			m = min_value(successor_function(state,a))
+			if m > v:
+				v = m
+				action = a
 
 	elif player_turn == minplayer:
 		v = maxint
 		for a in actions(state):
-			v = min(v, max_value(successor_function(state,a)))
-		return v
+			print "checking action ", a
+			M = max_value(successor_function(state,a))
+			if M < v:
+				v = M
+				action = a
+
+	return successor_function(state, action)
 
 def alphabeta_pruning(state):
 	# to be implemented
 	pass
 
+def printBoard(state):
+	for row in range(4):
+		for col in range(4):
+			if state[0][row*4+col] == 1:
+				print 'C',
+			elif state[0][row*4+col] == -1:
+				print 'H',
+			else:
+				print '0',
+		print
+
+	print "player: ", state[1]
+
 # t.fd(200)
 # raw_input()
 
-minimax_algorithm( [uf_zeroList(16), maxplayer] )
+print "making first move..."
+
+initstate = [uf_zeroList(16),maxplayer]
+
+# first random computer move
+initstate[0][2] = 1
+initstate[1] = minplayer
+
+ns = initstate
+
+while(True):
+	if(terminal_test(ns)):
+		print "GAME OVER"
+		break
+	printBoard(ns)
+	inp = int(raw_input("move: "))
+	ns = successor_function(ns, inp)
+	printBoard(ns)
+	print "thinking..."
+	ns = minimax_algorithm( ns )
+	if(terminal_test(ns)):
+		print "GAME OVER"
+		break
+
+print "\n\n\n", ns
+print "\n\n"
+printBoard(ns)
