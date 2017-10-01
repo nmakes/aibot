@@ -1,5 +1,6 @@
 import turtle as t
 import time
+from modules import *
 
 #Set the title of the screen
 t.title("My program title 1 goes here")
@@ -94,11 +95,58 @@ def drawRedCircle(x,y):
 	t.circle(10)
 	t.end_fill()
 
+humanPlayed = False
+
+ns = None
+
 def humanEvent(x,y):
-	pass
+
+	global ns
+
+	drawBlueCircle(x,y)
+
+	xTicks = int(x/40)
+
+	if x<0:
+		xTicks -= 1
+
+	xTicks += 3
+
+	ns = successor_function(ns, xTicks)
+
+	(ns, compAction) = minimax_algorithm( ns )
+
+	print ns[0]
+
+	i = compAction - 1
+	row = get_ith_column_free_cell_index(ns[0], i)
+	row = 0 - row + 1
+	i = i-2
+
+	drawRedCircle(row * 40 + 10, i * 40 + 10 )
+
+	if(terminal_test(ns)):
+		print "GAME OVER"
+
+
+# -------------------------------------------
 
 drawGrid("drawing", xlow, ylow, 4, 4, cellSize)
+initstate = [uf_zeroList(16),maxplayer]
 
-t.onscreenclick(drawBlueCircle)
+# first random computer move
+print "making first move..."
+initstate[0][2] = 1
+initstate[1] = minplayer
 
-raw_input()
+ns = initstate
+
+t.onscreenclick(humanEvent)
+
+#t.onscreenclick(humanEvent)
+
+print "\n\n\n", ns
+print "\n\n"
+printBoard(ns)
+
+raw_input("TYPE ANY KEY TO EXIT")

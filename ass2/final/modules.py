@@ -1,4 +1,6 @@
 import turtle as t
+from random import randrange
+from time import time
 
 maxint = 999999999999999999
 minint = -999999999999999999
@@ -222,7 +224,7 @@ def minimax_algorithm(state):
 	if player_turn == maxplayer:
 		v = minint
 		for a in actions(state):
-			print "checking action ", a
+			#print "checking action ", a
 			m = min_value(successor_function(state,a))
 			if m > v:
 				v = m
@@ -231,7 +233,7 @@ def minimax_algorithm(state):
 	elif player_turn == minplayer:
 		v = maxint
 		for a in actions(state):
-			print "checking action ", a
+			#print "checking action ", a
 			M = max_value(successor_function(state,a))
 			if M < v:
 				v = M
@@ -239,35 +241,110 @@ def minimax_algorithm(state):
 
 	return successor_function(state, action)
 
-def alphabeta_pruning(state):
-	# to be implemented
-	pass
+# ALPHABETA
+
+def alphabeta_min_value(state, alpha, beta):
+
+	if terminal_test(state):
+		return utility_value(state)
+	else:
+		v = maxint
+		Actions = actions(state)
+		#print Actions
+		for a in Actions:
+			succ = successor_function(state,a)
+			if succ!=None:
+				v = min(v, alphabeta_max_value(succ, alpha, beta))
+				if v <= alpha:
+					return v
+				beta = min(beta,v)
+		return v
+
+def alphabeta_max_value(state, alpha, beta):
+
+	if terminal_test(state):
+		return utility_value(state)
+	else:
+		v = minint
+		Actions = actions(state)
+		#print Actions
+		for a in Actions:
+			succ = successor_function(state,a)
+			if succ!=None:
+				v = max(v, alphabeta_min_value(succ, alpha, beta))
+				if v >= beta:
+					return v
+				alpha = max(alpha, v)
+		return v
+
+def alphabeta_algorithm(state):
+
+	if verbose:
+		print state
+
+	board_setting = state[0]
+	player_turn = state[1]
+
+	action = None
+
+	alpha = minint
+	beta = maxint
+
+	if player_turn == maxplayer:
+		v = minint
+		for a in actions(state):
+			#print "checking action ", a
+			m = alphabeta_max_value(successor_function(state,a), alpha, beta)
+			if m > v:
+				v = m
+				action = a
+
+	return successor_function(state, action)
+
+
 
 def printBoard(state):
+	print
 	for row in range(4):
 		for col in range(4):
 			if state[0][row*4+col] == 1:
-				print 'C',
+				print 'm',
 			elif state[0][row*4+col] == -1:
 				print 'H',
 			else:
-				print '0',
+				print '.',
 		print
 
 	print "player: ", state[1]
 
+def menu():
+	print
+	print
+
+	print "1. Display empty board"
 # t.fd(200)
 # raw_input()
+
+"""
+WORKING CONSOLE GAME
+"""
+
+t1 = time()
+
 
 print "making first move..."
 
 initstate = [uf_zeroList(16),maxplayer]
 
-# first random computer move
-initstate[0][2] = 1
-initstate[1] = minplayer
+# first move calculated
+# ns = minimax_algorithm(initstate)
+ns = alphabeta_algorithm(initstate)
 
-ns = initstate
+print time() - t1, "seconds"
+# first random computer move
+# initstate[0][2] = 1
+# initstate[1] = minplayer
+# ns = initstate
 
 while(True):
 	if(terminal_test(ns)):
@@ -278,7 +355,11 @@ while(True):
 	ns = successor_function(ns, inp)
 	printBoard(ns)
 	print "thinking..."
-	ns = minimax_algorithm( ns )
+	t1 = time()
+	
+	# ns = minimax_algorithm( ns )
+	ns = alphabeta_algorithm( ns )
+	print time()-t1, "seconds"
 	if(terminal_test(ns)):
 		print "GAME OVER"
 		break
