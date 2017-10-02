@@ -1,6 +1,5 @@
 import turtle as t
 import time
-from modules import *
 
 #Set the title of the screen
 t.title("My program title 1 goes here")
