@@ -480,6 +480,12 @@ def reset_all_stats():
 
 def play_console_minimax_game():
 
+	config.R1 = 0 # number of nodes generated till the problem is solved
+	config.R2 = 0 # amount of memory allocated to one node
+	config.R3 = 0 # the maximum growth of the implicit stack
+	config.R4 = 0 # the total time to play the game
+	config.R5 = 0 # the number of nodes created in one micro second
+
 	t1 = time()
 	config.R2 = getsizeof(TreeNode)
 
@@ -529,11 +535,18 @@ def play_console_minimax_game():
 	config.maxStackSize = 0
 	config.tempStackSize = 0
 	config.R5 = (float(config.R1) / float(config.minimaxAgentTime)) / 100000
+	config.minimaxAgentTime = 0
 
 	if config.neat:
 		raw_input("press enter to continue ...")
 
 def play_console_alphabeta_game():
+
+	config.R6 = 0 # the number of nodes generated till the problem is solved
+	config.R7 = 0 # (R1 - R6)/R1 : saving using pruning
+	config.R8 = 0 # the total time to play a game
+
+	config.R8 = 0
 
 	t1 = time()
 	config.R2 = getsizeof(TreeNode)
@@ -580,6 +593,7 @@ def play_console_alphabeta_game():
 	config.R8 = t2-t1
 
 	config.R7 = float(float((config.R1 - config.R6))/float(config.R1))
+	config.alphaBetaAgentTime = 0
 
 	if config.neat:
 		raw_input("press enter to continue...")

@@ -69,12 +69,12 @@ def draw_blue_circle(x,y):
 	t.circle(config.circleRadius)
 	t.end_fill()
 
-def draw_red_circle(x,y):
+def draw_green_circle(x,y):
 	(centerX,centerY) = get_cell_center(x,y)
 	t.penup()
 	t.goto(centerX,centerY)
 	t.pendown()
-	t.fillcolor("red")
+	t.fillcolor("green")
 	t.begin_fill()
 	t.circle(config.circleRadius)
 	t.end_fill()
@@ -111,11 +111,29 @@ def get_coordinates_from_index(Idx):
 
 # config.state = [ [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], -1 ]
 # (x,y) = get_coordinates_from_index(0)
-# draw_red_circle( x,y )
+# draw_green_circle( x,y )
 
-def terminator():
+def alphabeta_terminator():
 	config.state = [ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 0 ]
 	config.gameRunning = None
+	config.abT2 = time()
+	config.R8 = config.abT2 - config.abT1
+	if config.R1 == 0 or config.R1 == "Not Played":
+		config.R7 = "Please play minimax followed by alphabeta game"
+	else:
+		config.R7 = float(float((config.R1 - config.R6))/float(config.R1))
+
+def minimax_terminator():
+	config.state = [ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 0 ]
+	config.gameRunning = None
+	config.mmT2 = time()
+	config.R4 = config.mmT2 - config.mmT1
+	config.R3 = config.maxStackSize
+	config.maxStackSize = 0
+	config.tempStackSize = 0
+	config.mmT1 = 0
+	config.mmT2 = 0
+	config.R5 = (float(config.R1) / float(config.minimaxAgentTime)) / 100000
 
 def declare_winner():
 	t.up()
@@ -155,7 +173,7 @@ def humanEvent(x,y):
 				config.state = successor_function(config.state, action)
 
 				if(terminal_test(config.state)):
-					terminator()
+					alphabeta_terminator()
 					config.guiWinner = config.minplayer
 					declare_winner()
 
@@ -168,10 +186,11 @@ def humanEvent(x,y):
 				compCol = config.guiAction - 1
 
 				(x,y) = get_coordinates_from_index(compRow*4 + compCol)
-				draw_red_circle(x,y)
+				draw_green_circle(x,y)
 
 				if(terminal_test(config.state)):
-					terminator()
+					alphabeta_terminator()
+					config.R11 += 1
 					config.guiWinner = config.maxplayer
 					declare_winner()
 
@@ -200,7 +219,7 @@ def humanEvent(x,y):
 				config.state = successor_function(config.state, action)
 
 				if(terminal_test(config.state)):
-					terminator()
+					minimax_terminator()
 					config.guiWinner = config.minplayer
 					declare_winner()
 
@@ -213,10 +232,11 @@ def humanEvent(x,y):
 				compCol = config.guiAction - 1
 
 				(x,y) = get_coordinates_from_index(compRow*4 + compCol)
-				draw_red_circle(x,y)
+				draw_green_circle(x,y)
 
 				if(terminal_test(config.state)):
-					terminator()
+					minimax_terminator()
+					config.R11 += 1
 					config.guiWinner = config.maxplayer
 					declare_winner()
 
@@ -225,41 +245,60 @@ def gui_print_board():
 
 def play_gui_alphabeta_game():
 
+	config.alphaBetaAgentTime = 0
+	config.R6 = 0 # the number of nodes generated till the problem is solved
+	config.R7 = 0 # (R1 - R6)/R1 : saving using pruning
+	config.R8 = 0 # the total time to play a game
+
 	initialize_gui()
 
 	config.gameRunning = config.alphaBetaGame
-	config.state = state = [ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 1 ]
+	config.state = [ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 1 ]
+	config.abT1 = time()
 	
 	# computer plays
+	prevState = config.state
 	config.state = alphabeta_algorithm( config.state )
 
-	compIdx = get_ith_column_free_cell_index(config.state[0], config.guiAction - 1)
-	compRow = int(compIdx / 4) - 1
+	compIdx = get_ith_column_free_cell_index(prevState[0], config.guiAction - 1)
+	compRow = int(compIdx / 4)
 	compCol = config.guiAction - 1
 
 	(x,y) = get_coordinates_from_index(compRow*4 + compCol)
-	draw_red_circle(x,y)
+	draw_green_circle(x,y)
 
 
 def play_gui_minimax_game():
 
-	config.t1 = time()
-	config.R2 = getsizeof(TreeNode)
+	config.R1 = 0 # number of nodes generated till the problem is solved
+	config.R2 = 0 # amount of memory allocated to one node
+	config.R3 = 0 # the maximum growth of the implicit stack
+	config.R4 = 0 # the total time to play the game
+	config.R5 = 0 # the number of nodes created in one micro second
+	config.minimaxAgentTime = 0
 
 	initialize_gui()
 
 	config.gameRunning = config.miniMaxGame
-	config.state = state = [ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 1 ]
+	config.state = [ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 1 ]
+	config.mmT1 = time()
+
+	config.R2 = getsizeof(TreeNode)
 
 	# computer plays
-	config.state = minimax_algorithm( config.state )
+	prevState = [ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 1 ]
+	config.state = [ [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], -1 ]
+	config.guiAction = 1
 
-	compIdx = get_ith_column_free_cell_index(config.state[0], config.guiAction - 1)
-	compRow = int(compIdx / 4) - 1
+	# prevState = config.state
+	# config.state = minimax_algorithm( config.state )
+
+	compIdx = get_ith_column_free_cell_index(prevState[0], config.guiAction - 1)
+	compRow = int(compIdx / 4)
 	compCol = config.guiAction - 1
 
 	(x,y) = get_coordinates_from_index(compRow*4 + compCol)
-	draw_red_circle(x,y)
+	draw_green_circle(x,y)
 
 
 def gui_menu():
@@ -280,60 +319,90 @@ def gui_publish_stats():
 
 	initialize_gui()
 
-	t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-40 )
-	t.write("Minimax based analysis:-", False, "left")
+	yPlacement = 40
 
-	t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-60 )
+	t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-yPlacement )
+	t.write("Minimax based analysis:-", False, "left")
+	yPlacement += 20
+
+	t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-yPlacement )
+	t.write("------------------------", False, "left")
+	yPlacement += 20
+
+	t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-yPlacement )
 	t.write("R1 (number of nodes generated) = " + str(config.R1), False, "left")
-	
-	t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-80 )
+	yPlacement += 20
+
+	t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-yPlacement )
 	t.write("R2 (memory allocated to one node) = " + str(config.R2), False, "left")
-	
-	t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-100 )
+	yPlacement += 20
+
+	t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-yPlacement )
 	t.write("R3 (maximum growth of the implicit stack) = " + str(config.R3), False, "left")
-	
-	t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-120 )
+	yPlacement += 20
+
+	t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-yPlacement )
 	t.write("R4 (total time to play the game) = " + str(config.R4), False, "left")
-	
-	t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-140 )
-	t.write("R5 (number of nodes created in one micro second) = " + str(config.R5), False, "left")
+	yPlacement += 20
+
+	t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-yPlacement )
+	t.write("R5 (nodes created per micro sec) = " + str(config.R5), False, "left")
+	yPlacement += 80
 
 	# Alpha Beta Pruning based stats
 
-	t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-180 )
+	t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-yPlacement )
 	t.write("Alpha Beta pruning based analysis:-", False, "left")
+	yPlacement += 20
 
-	t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-200 )
+	t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-yPlacement )
+	t.write("------------------------", False, "left")
+	yPlacement += 20
+
+	t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-yPlacement )
 	t.write("R6 (number of nodes generated) = " + str(config.R6), False, "left")
+	yPlacement += 20
 
-	t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-220 )
+	t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-yPlacement )
 	t.write("R7 (saving using pruning) = " + str(config.R7), False, "left")
+	yPlacement += 20
 
-	t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-240 )
+	t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-yPlacement )
 	t.write("R8 (total time to play a game) = " + str(config.R8), False, "left")
+	yPlacement += 80
 
 	# Comparative analysis
 
-	t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-280 )
+	t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-yPlacement )
 	t.write("Comparative Analysis:-", False, "left")
+	yPlacement += 20
 
-	if config.R6==0 or R1==0:
-		t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-300 )
+	t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-yPlacement )
+	t.write("------------------------", False, "left")
+	yPlacement += 20
+
+	if config.R6==0 or config.R1==0 or config.R1=="Not Played" or config.R6 == "Not Played":
+		t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-yPlacement )
 		t.write("Please play both the games for comparative Analysis", False, "left")		
-	
+		yPlacement += 20
+
 	else:
 		config.R9 = config.R1 / config.R6
 		
-		t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-300 )
+		t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-yPlacement )
 		t.write("R9 (minimax/alphabeta) = " + str(config.R9), False, "left")
+		yPlacement += 20
 
-		t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-320 )
+		t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-yPlacement )
 		t.write("R10 (average time to play the game) = " + str(config.R10), False, "left")
+		yPlacement += 20
 
-		t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-340 )
+		t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-yPlacement )
 		t.write("R11 (number of times player M wins) = " + str(config.R11), False, "left")
+		yPlacement += 20
 
-		t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-360 )
+		t.setpos( -(config.guiWidth/2) + 20, (config.guiHeight/2)-yPlacement )
 		t.write("R12 (average number of times player M wins) = " + str(config.R12), False, "left")
+		yPlacement += 20
 
 t.onscreenclick(humanEvent)

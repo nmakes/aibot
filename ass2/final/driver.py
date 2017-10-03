@@ -27,6 +27,7 @@ def main():
 				
 			elif (inp==2):
 				if config.gui:
+					config.R4 = time()
 					play_gui_minimax_game()
 					print "Game is running ..."
 				else:
@@ -34,7 +35,9 @@ def main():
 
 			elif (inp==3):
 				if config.gui:
+					config.R8 = time()
 					play_gui_alphabeta_game()
+					config.R8 = time() - config.R8
 					print "Game is running ..."
 				else:
 					play_console_alphabeta_game()
