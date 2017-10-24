@@ -1,0 +1,23 @@
+$COURSES$,,,,
+Courses,Program A,Program B,Program C,L T P
+C_01,DC,NA,DE,3 0 3
+C_02,DC,NA,NA,3 0 3
+C_03,DE,DC,NA,3 0 2
+C_04,NA,DC,DE,3 0 2
+C_05,NA,NA,DC,3 0 3
+C_06,DE,NA,DC,3 0 3
+C_07,DE,NA,DE,3 1 0
+C_08,NA,DC,DE,3 1 0
+C_09,DC,DE,NA,3 1 0
+C_10,NA,DE,DC,3 1 0
+C_11,GE,GE,GE,2 0 0
+C_12,GE,GE,GE,2 0 0
+$PROF$,,,,
+Professor,List of courses taught by the professor,,,
+Prof-1,C_01,C_08,NA,NA
+Prof-2,C_09,NA,NA,NA
+Prof-3,C_04,C_05,NA,NA
+Prof-4,C_10,C_11,NA,NA
+Prof-5,C_02,C_07,NA,NA
+Prof-6,C_03,NA,NA,NA
+Prof-7,C_06,C_12,NA,NA

@@ -1,3 +1,8 @@
+"""
+NAME: Naveen Venkat
+ID: 2015A7PS0078P
+"""
+
 from graphics import *
 from modules import *
 import config
@@ -7,6 +12,7 @@ import config
 # ==================================
 
 def main():
+
 	inp = 0
 
 	while(inp!=5):
