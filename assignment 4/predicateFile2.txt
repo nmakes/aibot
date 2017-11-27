@@ -1,0 +1,23 @@
+EarthRound
+
+#Query1: Are you a native of Begone?
+#If this is true, I am in Begone. If this is false, I am on Amin.
+
+For_every p ( (IsBegonian(p) & TellsTruth(p)) | (IsAminian(p) & ~TellsTruth(p)) ) ?
+
+
+#Query2: Are you in Amin?
+#If this is true, traveler is on Amin and that person said the truth.
+
+For_every p ( (IsAminian(p) & TellsTruth(p)) | (IsBegonian(p) & ~TellsTruth(p)) ) ?
+
+
+#Query3: Is Earth Round?
+#If this is true, then the person is on his home island
+
+For_every p ( EarthRound & TellsTruth(p) )
+
+
+#Query4: She is on Begone (This statement can be said by a begonian on begone, and by an aminian on begone)
+
+#Query5: 

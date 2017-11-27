@@ -1,0 +1,8 @@
+For_every p ( IsAminian(p) <==> IsNative(p,Amin) )
+For_every p ( IsBegonian(p) <==> IsNative(p,Begone) )
+
+For_every p ( (IsBegonian(p) & IsInBegone(p)) & (IsAminian(p) & IsInAmin(p)) <==> TellsTruth(p) )
+For_every p ( (IsBegonian(p) & IsInAmin(p)) | (IsAminian(p) & IsInBegone(p)) <==> ~TellsTruth(p) )
+
+For_every p ( ( (IsAminian(p) & TellsTruth(p)) | (IsBegonian(p) & ~TellsTruth(p)) ) <==> IsInAmin(p) )
+For_every p ( ( (IsBegonian(p) & TellsTruth(P)) | (IsAminian(p) & ~TellsTruth(p)) ) <==> IsInBegone(p) )

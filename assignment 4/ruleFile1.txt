@@ -1,0 +1,33 @@
+Human(Marcus)
+Pompeian(Marcus)
+Born(Marcus, 40)
+Volcano()
+VolcanoErruptedIn(79)
+PresentYear(2017)
+Ruler(Caesar)
+Assasinate(Marcus, Caesar)
+
+For_every p (Human(p) ==> Mortal(p))
+For_every p (Mortal(p) ==> There_exists y (Dies(p,y)))
+For_every p (Pompeian(p) ==> Dies(p,79))
+For_every p For_every y (Mortal(p) & Born(p,y) ==> For_every z ((z>=y+150)==>Dead(p,z)))
+For_every p For_every y (Alive(p,y) ==> ~Dead(p,y))
+
+For_every p For_every y (Human(p) & Born(p,y) ==> For_every z (LessThan(z,y) ==> ~Alive(p,z)))
+For_every p For_every y (Human(p) & Dies(p,y) ==> For_every z ((z>=y) ==> Dead(p,z)))
+
+For_every p (Pompeian(p) ==> Roman(p))
+For_every p (Roman(p)==>( (Loyal(p,Caesar) & ~Hated(p,Caesar)) | (~Loyal(p,Caesar) & Hated(p,Caesar)))
+For_every p (Human(p)==>There_exists p2 Loyal(p,p2))
+For_every p ( Human(p) ==> For_every r ( Ruler(r) ==> ( ~Loyal(p,r) ==> Assasinate(p,r) ) ) )
+
+
+QUESTIONS:
+Alive(Marcus)?
+Assasinate(x,Caesar)?
+Loyal(Marcus,Caesar)?
+Ruler(r)?
+VolcanoErruptedIn(y)?
+Dead(Marcus,60)?
+Hated(Marcus,Caesar)?
+Alive(Marcus,35)?

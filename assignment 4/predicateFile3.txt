@@ -1,0 +1,21 @@
+isChild(Raven)
+isChild(Lauren)
+isChild(Zach)
+isChild(Tara)
+isChild(Xander)
+
+isParent(Maier)
+isParent(Reed)
+isParent(Morgan)
+isParent(Fedor)
+isParent(Hanson)
+
+~Parent(Reed,Lauren)
+~Parent(Reed,Zach)
+~Parent(Fedor,Lauren)
+~Parent(Fedor,Zach)
+
+Fascinated(Tara,"shopping at the country store")
+~Fascinated(Xander,"hay ride")
+~Fascinated(Zach, "hay ride")
+~Fascinated(Zach, "apple picking")

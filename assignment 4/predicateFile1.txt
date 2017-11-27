@@ -1,0 +1,8 @@
+Human(x) : x is a human
+Pompeian(x) : x is a Pompeian
+Born(x, y) : x was born in the year y
+Volcano(v) : v is a volcano
+VolcanoErruptedIn(y) : volcano errupted in the year y
+PresentYear(y) : the present year is y
+Ruler(r) : r is a ruler
+Assasinate(p, q) : p assasinates q

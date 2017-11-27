@@ -1,0 +1,5 @@
+For_every c (Child(c) ==> (There_exists p (isParent(p) & Parent(p,c))) )
+For_every p For_every c ( isParent(p) & isChild(c) ==> (Parent(p,c)==>Child(c,p)) )
+There_exists c (Fascinated(c,"feeding the animals"))
+There_exists c (Fascinated(c,"cider making process") & (c =/= Zach) & (c =/= Lauren) )
+There_exists c (Child(c,Hanson) & (~Fascinated(c, "hay ride")))
