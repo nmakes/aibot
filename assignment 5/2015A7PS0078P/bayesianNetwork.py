@@ -46,7 +46,7 @@ class BayesianNetwork(dict): # Inherits from dict datatype
 		# vertexDict is a dictionary of VariableNodes indexed (key) by the name
 		self = vertexDict
 
-
+	# MODULE createBayesianNetwork
 	def createBayesianNetwork(self, cause_effect_file): #Populates the network
 
 		# Create a helper object and preprocess (as described in class FileHelper)
@@ -70,7 +70,7 @@ class BayesianNetwork(dict): # Inherits from dict datatype
 				(self[par].childrenInOrder).append(var) # append the variable node to the list of children
 				(self[par].children).add(var) # add the variable node to the set of children
 
-
+	# MODULE computeMarkovBlanket
 	def computeMarkovBlanket(self, node):
 
 		markovBlanket = set() # We want a set so as to avoid repeating elements
@@ -97,7 +97,7 @@ class BayesianNetwork(dict): # Inherits from dict datatype
 		# convert the final set into list and return
 		return list(markovBlanket)
 
-
+	# MODULE createExpression
 	def createExpression(self, Q, C):
 
 		# Q = list of query variables
@@ -384,6 +384,10 @@ class ProbabilityFinder:
 			return False
 
 
+	# MODULE computeProbability
+	# It has been renamed to P to keep the recursive statements simple
+	# Also, it calculates the parents (instead of markov blanket as explained) inside the function,
+	# as it takes the whole bayesian network so that recursion is possible with enough data.
 	def P(self, expr, bn): # Functions that calulates probability of a given expression
 		'''
 			Parameters:
