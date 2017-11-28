@@ -7,6 +7,7 @@ flag_show_errors = True
 input_file_list = ['input1.txt', 'input2.txt']
 
 neat = True
+printexpr = False
 
 # Flag to consider only parents instead of MarkovBlanket
 # If true, then, only parents from the markov blanket will be considered for expansion
