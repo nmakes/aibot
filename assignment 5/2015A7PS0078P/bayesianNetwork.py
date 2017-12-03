@@ -548,7 +548,7 @@ class ProbabilityFinder:
 						Now, apply the same again on each of these two.
 
 							(i) Consider P(C,D,A,B,E).
-							
+
 								All parents exist in the expression, so we are ready to evaluate it.
 
 								To evaluate it, do the following:
@@ -563,11 +563,11 @@ class ProbabilityFinder:
 
 								Thus the above reduces to:
 
-									= P(C|A,B) * P(D|B) * P(A) * P(B|E) * P(E)
+									= P(C|A,B) * P(D|B) * P(A) * P(B|A,E) * P(E)
 								
 								This can be obtained from the corresponding CPTs for each variable.
 
-							(ii) Consider P(C,D,A,B,E).
+							(ii) Consider P(C,D,A,B,~E).
 							
 								Following the discussion in part (i) this above reduces to:
 
