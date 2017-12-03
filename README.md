@@ -1,5 +1,5 @@
 # aiBot #
-## A collection of projects solving problems in AI ##
+A collection of projects solving problems in AI
 
 ## Completed Projects ##
 * Bayesian Network Simulation
