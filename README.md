@@ -6,6 +6,6 @@ A collection of projects solving problems in AI
 * Connect 4 Game playing bot
 
 ## Ongoing Projects ##
-* Predicate Logic
+* First Order Logic Inference System
 * Time Table Scheduling Bot
 * Vacuum Cleaner Bot
