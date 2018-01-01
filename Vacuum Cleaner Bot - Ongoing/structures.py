@@ -3,14 +3,8 @@
 
 from random import ( randrange, sample )
 
+# Global Variables
 failure = None
-
-# Global Constants. Can be changed during the program execution.
-globalXmin = config.Xmin
-globalXmax = config.Xmax
-globalYmin = config.Ymin
-globalYmax = config.Ymax
-
 
 class World(object):
 
@@ -31,15 +25,24 @@ class World(object):
 	-----------------------
 
 	The state is a 2-tuple. The first element of the tuple is the environment. 
-	The	second element of the list is the tuple representing the position of 
-	the agent as (x,y).
+	The	second element of the list is the tuple representing the position 
+	(coordinates) of the agent as (x,y).
 
 	'''
 
 
-	def __init__(self, xmin, xmax, ymin, ymax, p=0.2):
+	def __init__(self, xmin, xmax, ymin, ymax, dirt=config.defaultDirt):
 
 		# Set dimensions of the world
+		if(xmin==None):
+			xmin = config.Xmin
+		if xmax==None:
+			xmax = config.Xmax
+		if ymin==None:
+			ymin = config.Ymin
+		if ymax==None:
+			ymax = config.Ymax
+
 		self.xmin = xmin
 		self.xmax = xmax
 		self.ymin = ymin
@@ -50,7 +53,7 @@ class World(object):
 
 		# Create and populate the environment
 		self.world = None
-		self.dirtify(p)
+		self.dirtify(dirt)
 
 
 	def get_pos(self, x, y, xmax=None):
@@ -114,28 +117,9 @@ class World(object):
 		world[World.get_pos(x,y)] = False
 
 
-	def get_goal_world(self):
-
-		# Returns the goal world
-		# Every cell in goal world is clean
-
-		return self.goal
-
-
-	def get_goal_states(self):
-
-		#Returns the goal states
-
-		goalStates =    [	(self.goal, (xmin,ymax)),
-							(self.goal, (xmax,ymin)),
-							(self.goal, (xmin,ymax)),
-							(self.goal, (xmax,ymin))	]
-		return goalStates
-
-
 	def get_random_state(self, xmin=None, xmax=None, ymin=None, ymax=None):
 
-		# Returns a random position
+		# Returns a state with random position in the range (xmax-xmin+1, ymax-ymin+1)
 
 		if(xmin==None):
 			xmin = self.xmin
@@ -146,13 +130,15 @@ class World(object):
 		if(ymax==None):
 			ymax = self.ymax
 
-		possible_x = range(xmax-xmin+1)
-		possible_y = range(ymax-ymin+1)
+		possible_x = range(xmin, xmax+1)
+		possible_y = range(ymin, ymax+1)
 
 		return (randomWorld, (sample(possible_x,1)[0], sample(possible_y,1)[0]))
 
 
 	def print_world(self):
+
+		# Prints the world on the console
 
 		print "---"
 
@@ -169,85 +155,105 @@ class World(object):
 
 	def __str__(self):
 		
-		global globalXmin
-		global globalYmin
-		global globalXmax
-		global globalYmax
-
 		retStr = ""
-		retStr = retStr + "xm: " + globalXmin + ", xM: " + globalXmax + ", ym: ", + globalYmin + ", yM: " + globalYmax
+		retStr = retStr + "xm: " + self.xmin + ", xM: " + self.xmax + ", ym: ", + self.ymin + ", yM: " + self.ymax
 		return retStr
 
 
 class Problem(object):
 
+	'''
+	Defines the problem.
+	
+	# Components of a problem:
+	--------------------------
+	
+	A problem is set in a unique 'world'. Thus it has its own unique 'goals'.
+	The states are represented as given in the class World.
+
+	'''
+
 	# constructor
-	def __init__(self, _initialState, _xmin=None, _xmax=None, _ymin=None, _ymax=None):
+	def __init__(self, initialState, xmin=None, xmax=None, ymin=None, ymax=None, dirt=config.defaultDirt):
 
-		global globalXmin
-		global globalYmin
-		global globalXmax
-		global globalYmax
+		# Initial and Goal Worlds
+		self.world = World(xmin, xmax, ymin, ymax, dirt)
+		self.goalWorld = config.goalWorld
 
-		if(_xmin==None):
-			_xmin = globalXmin
-			_xmax = globalXmax
-			_ymin = globalYmin
-			_ymax = globalYmax
+		# Initial and Goal States
+		self.initialState = initialState
+		self.goalStates = self.get_goal_states()
+
+
+	def get_goal_states(self):
+
+		#Returns the goal states
+
+		goalStates =    [	(self.goal, (xmin,ymin)),
+							(self.goal, (xmin,ymax)),
+							(self.goal, (xmax,ymin)),
+							(self.goal, (xmax,ymax))	]
+		return goalStates
 		
-		goalWorld = World.get_goal_world(_xmin, _xmax, _ymin, _ymax)
+	
+	def possible_actions(self, state):
 
-		self.initialState = _initialState
-		self.goalStates = World.get_goal_states(goalWorld, _xmin, _xmax, _ymin, _ymax)
-		self.xmin = _xmin
-		self.xmax = _xmax
-		self.ymin = _ymin
-		self.ymin = _ymax
+		'''
+		
+		This function returns the possible actions (that can be taken) in a state.
 
-	# possible actions: gives the possible actions in a state (does not return the impossible actions)
-	def possible_actions(self, state, _xmin=None, _xmax=None, _ymin=None, _ymax=None):
+		We initialize the possibleActions list with the five actions:
+		1. left
+		2. right
+		3. up
+		4. down
+		5. suck (clean the cell by sucking the dirt)
 
-		global globalXmin
-		global globalYmin
-		global globalXmax
-		global globalYmax
+		Then, the coordinates of the agent are checked to see which moves can be performed.
 
-		if(_xmin==None):
-			_xmin = globalXmin
-			_xmax = globalXmax
-			_ymin = globalYmin
-			_ymax = globalYmax
+		'''
 
-		possibleActions = ['l','r','u','d','s']
 		actions = []
 
-		world = state[0]
-		(x,y) = state[1]
+		world = state[0] #	( From the state
+		(x,y) = state[1] #    representation )
 		
-		for a in possibleActions:
-			if a=='l':
-				if x>_xmin:
-					actions.append(a)
-			elif a=='r':
-				if x<_xmax:
-					actions.append(a)
-			elif a=='u':
-				if y>_ymin:
-					actions.append(a)
-			elif a=='d':
-				if y<_ymax:
-					actions.append(a)
-			elif a=='s':
-				if World.has_dirt(world,x,y):
-					actions.append(a)
+		if x>xmin:
+			# If at least one cell is on the left
+			# we can move left
+			actions.append('l')
+
+		if x<xmax:
+			# If at least one cell is on the right
+			# we can move right
+			actions.append('r')
+
+		if y>ymin:
+			# If at least one cell is above
+			# we can move up
+			actions.append('u')
+
+		if y<ymax:
+			# If at least one cell is below
+			# we can move down
+			actions.append('d')
+
+		if World.has_dirt(world,x,y):
+			# If there is dirt in the cell
+			# we can clean the dirt
+			actions.append('s')
 
 		return actions
 
-	# successor function: gives the next state based on the action on a state
+
 	def successor_function(self, state, action):
+
+		# This function returns the next state based on the action on a state
+
 		world = state[0]
 		(x,y) = state[1]
 
+		# Change x/y/world based on the action
 		if (action=='l'):
 			x -= 1
 		elif (action=='r'):
@@ -259,13 +265,19 @@ class Problem(object):
 		elif (action=='s'):
 			World.clean(world, x,y)
 
+		# Return the successor state
 		return [world, (x,y)]
 
+
 	def goal_test(self, state):
+
+		# Tests if the given state is the goal state
+
 		if state in self.goalStates:
 			return True
 		else:
 			return False
+
 
 	def compute_heuristic1(self, state):
 		"""
@@ -275,6 +287,7 @@ class Problem(object):
 		Optimization: move towards the direction with a lower value of this heuristic. 
 		"""
 		pass
+
 
 	def compute_heuristic2(self, state):
 		"""
@@ -287,6 +300,7 @@ class Problem(object):
 
 	def __str__(self):
 		retStr = str(self.initialState) + " " + str(self.goalStates)
+
 
 class TreeNode:
 
