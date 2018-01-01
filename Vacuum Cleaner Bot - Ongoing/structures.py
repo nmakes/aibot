@@ -304,40 +304,70 @@ class Problem(object):
 
 class TreeNode:
 
-	def __init__(self, _state, _parent=None, _action=None):
-		
-		self.state = _state
-		self.parent = _parent
-		self.action = _action
-		self.depth = 0
+	'''
 
-		if self.parent!=None:
-			self.depth = self.parent.depth + 1
+	The tree data structure will be used for state-space search.
+
+	Each node of the tree contians:
+	- the state it represents
+	- its parent
+	- the action that was taken to reach its state
+	- its depth of the node from the root
+
+	NOTE: The root node has state = initialState, parent = None, action = None, depth = 0
+
+	The following operations can be performed:
+	1. Breadth First Search (BFS)
+	2. Depth First Search (DFS)
+	3. Iterative Deepening DFS
+	4. Any of the above along with heuristics as defined in Problem class
+
+	'''
+
+	def __init__(self, state, parent=None, action=None, depth=0):
+		
+		self.state = state
+		self.parent = parent
+		self.action = action
+		self.depth = depth
+
 
 	def __str__(self):
-		return "\nSTATE: " + str(self.state) + "\nACTION: " + str(self.action)
+		return "\nSTATE: " + str(self.state) + "\nACTION: " + str(self.action) + "\nDEPTH: " + str(self.depth)
+
 
 	def __repr__(self):
-		return "\nSTATE: " + str(self.state) + "\nACTION: " + str(self.action)
+		return "\nSTATE: " + str(self.state) + "\nACTION: " + str(self.action) + "\nDEPTH: " + str(self.depth)
 
-	# child node: gives the child node pertaining to the given action on the state contained in the problem
+
 	def child_node(self, problem, action):
+
+		# Returns the child node pertaining to the given action on the state contained in the problem
+
 		nextState = problem.successor_function(self.state, action)
-		childNode = TreeNode(nextState, self, action)
+		childNode = TreeNode(nextState, self, action, self.depth+1)
 		return childNode
 
-	# solution resulting the path to the goal states
+
 	def solution(self):
+
+		# Returns the path from the root node to the present node.
+		# Particularly useful in constructing the path in case the goal is found.
+
 		mov = self
 		soln = []
 
 		while mov!=None:
+			# Keep traversing to the top of the tree until the root is reached (root's parent is None)
 			soln.append(mov.action)
 			mov = mov.parent
 		
 		return soln[::-1]
 
-	# T1: BFS
+
+	# Implementation of Searching Algorithms
+
+	# 1. BFS
 	def breadth_first_search(self, problem):
 
 		node = TreeNode(problem.initialState)
@@ -363,6 +393,25 @@ class TreeNode:
 			
 			for action in problem.possible_actions(node.state):
 				
+				child = node.child_node(problem, action)
+				
+				if (child.state not in exploredStates) or (child not in frontier):                    
+					if problem.goal_test(child.state): 
+						return child.solution()
+
+					frontier.append(child)
+
+	# 2. DFS
+	def depth_first_search(self, problem):
+
+		node = TreeNode(problem.initialState)
+		
+		if problem.goal_test(node.state)==True:
+			return node.solution()
+
+		else:
+			for action in problem.possible_actions(node.state):
+	
 				child = node.child_node(problem, action)
 				
 				if (child.state not in exploredStates) or (child not in frontier):                    
