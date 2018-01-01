@@ -20,7 +20,8 @@ rootNode = TreeNode(initialState)
 while True:
 	print "1. Display the room environment"
 	print "2. Find the path using (BFS)"
-	print "3. Exit"
+	print "3. Find the path using MRV + Backpropagation"
+	print "4. Exit"
 
 	inp = int(raw_input())
 
@@ -31,4 +32,7 @@ while True:
 		print rootNode.breadth_first_search(cleanTheRoomProblem)
 
 	elif inp==3:
+		print "Not implemented"
+
+	elif inp==4:
 		break
