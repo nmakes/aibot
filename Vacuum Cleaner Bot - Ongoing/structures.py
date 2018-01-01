@@ -3,6 +3,7 @@
 
 from random import ( randrange, sample )
 
+
 # Global Variables
 failure = None
 
