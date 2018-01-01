@@ -8,4 +8,6 @@ Ymax = 9
 
 defaultDirt = 0.2
 
-goalWorld = [[False for x in range(xmax-xmin+1)] for y in range(ymax-ymin+1)]
+goal_worlds = [[False for x in range(xmax-xmin+1)] for y in range(ymax-ymin+1)]
+
+iddfsMaxDepth = 500

@@ -310,16 +310,15 @@ class TreeNode:
 
 	Each node of the tree contians:
 	- the state it represents
-	- its parent
+	- its parent (required for backtracking)
 	- the action that was taken to reach its state
-	- its depth of the node from the root
+	- its depth from the root
 
 	NOTE: The root node has state = initialState, parent = None, action = None, depth = 0
 
 	The following operations can be performed:
 	1. Breadth First Search (BFS)
-	2. Depth First Search (DFS)
-	3. Iterative Deepening DFS
+	3. Iterative Deepening Depth First Search (IDDFS)
 	4. Any of the above along with heuristics as defined in Problem class
 
 	'''
@@ -366,9 +365,11 @@ class TreeNode:
 
 
 	# Implementation of Searching Algorithms
+	# The following are static methods
 
 	# 1. BFS
-	def breadth_first_search(self, problem):
+	@staticmethod
+	def bfs(problem):
 
 		node = TreeNode(problem.initialState)
 		
@@ -402,20 +403,40 @@ class TreeNode:
 					frontier.append(child)
 
 	# 2. DFS
-	def depth_first_search(self, problem):
+	@staticmethod
+	def iddfs(node, problem, iddfsDepth, iddfsLimit):
 
-		node = TreeNode(problem.initialState)
-		
-		if problem.goal_test(node.state)==True:
+		if problem.goal_test(node.state)==True: # If the initial state is a goal
+			# then return the solution
 			return node.solution()
 
-		else:
-			for action in problem.possible_actions(node.state):
-	
+		else: # Otherwise scan its children.
+
+			# Enumerate the possible actions
+			possibeActions = problem.possible_actions(node.state)
+
+			# and for each action
+			for action in possibleActions:
+
+				# Generate the child node
 				child = node.child_node(problem, action)
 				
-				if (child.state not in exploredStates) or (child not in frontier):                    
-					if problem.goal_test(child.state): 
-						return child.solution()
+				# and check if it is a goal.	
+				if problem.goal_test(child.state): # If it is indeed a goal, 
+					# then return the solution
+					return child.solution()
 
-					frontier.append(child)
+				else: # Otherwise, check the depth and call iddfs on the child
+
+					childResult = None
+
+					if iddfsDepth < iddfsLimit: # If depth is within limits call normally
+						childResult = TreeNode.iddfs(child, problem, iddfsDepth+1, iddfsLimit)
+
+					else: # If depth is outside the limits, provide conditions to backtrack the iddfs
+						pass
+
+					
+					# TODO
+					# Now consider the child's result and decide whether to backtrack or start a new IDDFS
+					# search with limit = limit+1
