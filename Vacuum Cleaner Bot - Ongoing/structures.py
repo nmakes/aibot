@@ -370,6 +370,12 @@ class TreeNode:
 	# 1. BFS
 	@staticmethod
 	def bfs(problem):
+		
+		pass
+
+		# TODO: complete this
+
+		'''
 
 		node = TreeNode(problem.initialState)
 		
@@ -401,6 +407,7 @@ class TreeNode:
 						return child.solution()
 
 					frontier.append(child)
+		'''
 
 	# 2. DFS
 	@staticmethod
