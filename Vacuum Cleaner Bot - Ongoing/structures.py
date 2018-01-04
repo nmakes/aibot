@@ -419,6 +419,8 @@ class TreeNode:
 
 		else: # Otherwise scan its children.
 
+			childSolution = None
+
 			# Enumerate the possible actions
 			possibeActions = problem.possible_actions(node.state)
 
@@ -431,19 +433,21 @@ class TreeNode:
 				# and check if it is a goal.	
 				if problem.goal_test(child.state): # If it is indeed a goal, 
 					# then return the solution
-					return child.solution()
+					childResult = child.solution()
+					return childResult
 
 				else: # Otherwise, check the depth and call iddfs on the child
-
-					childResult = None
 
 					if iddfsDepth < iddfsLimit: # If depth is within limits call normally
 						childResult = TreeNode.iddfs(child, problem, iddfsDepth+1, iddfsLimit)
 
 					else: # If depth is outside the limits, provide conditions to backtrack the iddfs
 						pass
-
 					
-					# TODO
-					# Now consider the child's result and decide whether to backtrack or start a new IDDFS
-					# search with limit = limit+1
+			# TODO
+			# Now consider the child's result and decide whether to backtrack or start a new IDDFS
+			# search with limit = limit+1
+
+			if childResult == None:
+
+				# The child didn't give any solution, so use another 
